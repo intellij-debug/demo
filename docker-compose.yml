@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+    mysql:
+        image: mysql:latest
+        container_name: mysql
+        ports:
+            - "127.0.0.1:3306:3306"
+        command: --lower_case_table_names=1 --sql-mode=""
+        environment:
+            MYSQL_DATABASE: demo
+            MYSQL_USER: demo
+            MYSQL_PASSWORD: demo
+            MYSQL_ROOT_PASSWORD: demo
+        networks:
+            - web-network
+
+    demo:
+        image: demo/demo:1.0.0
+        container_name: demo
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "127.0.0.1:8080:8080"
+            - "8000:8000"
+        command: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000 -Dspring.profiles.active=prod -jar demo.war
+        environment:
+            SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/demo?useUnicode=true&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&useSSL=false
+            SPRING_DATASOURCE_USERNAME: demo
+            SPRING_DATASOURCE_PASSWORD: demo
+        networks:
+            - web-network
+
+networks:
+    web-network:
