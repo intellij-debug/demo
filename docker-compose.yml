@@ -5,7 +5,7 @@ services:
         image: mysql:latest
         container_name: mysql
         ports:
-            - "127.0.0.1:3306:3306"
+            - ${MYSQL_PORTS}
         command: --lower_case_table_names=1 --sql-mode=""
         environment:
             MYSQL_DATABASE: demo
